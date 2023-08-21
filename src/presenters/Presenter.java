@@ -1,7 +1,7 @@
 package presenters;
-
-import Taller_2.ProgramaAcademico;
+import models.Asignatura;
 import models.Estudiante;
+import models.ProgramaAcademico;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +11,12 @@ public class Presenter {
 
     private static List<Estudiante> estudiantes = new ArrayList<>();
     private static List<ProgramaAcademico> programasAcademicos = new ArrayList<>();
+    private static List<Asignatura> asignaturas = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
 
 
     public static void main(String[] args) {
         int opcion;
-
         do {
             mostrarMenu();
             opcion = leerOpcion();
@@ -54,7 +54,6 @@ public class Presenter {
                     System.out.println("Opción no válida. Intente nuevamente.");
             }
         } while (opcion != 0);
-
         scanner.close(); // Cerrar el scanner al finalizar
     }
 
@@ -68,6 +67,7 @@ public class Presenter {
         System.out.println("6. Matricular estudiante");
         System.out.println("7. Mostrar estudiantes matriculados por programa");
         System.out.println("8. Mostrar registro de programas académicos");
+        System.out.println("9. Crear asignatura");
         System.out.println("0. Salir");
     }
 
