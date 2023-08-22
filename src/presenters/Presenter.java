@@ -47,6 +47,18 @@ public class Presenter {
                 case 8:
                     verProgramasAcademicos();                // Agregamos la opción ver programas academicos
                     break;//verProgramasAcademicos
+                case 9:
+                    createSubject();
+                    break;
+                case 10:
+                    registerStudentToSubject();
+                    break;
+                case 11:
+                    registerSubjectToProgram();
+                    break;
+                case 12:
+                    showAllInformationStudentsProgram();
+                    break;
                 case 0:
                     System.out.println("¡Hasta luego!");
                     break;
@@ -68,6 +80,9 @@ public class Presenter {
         System.out.println("7. Mostrar estudiantes matriculados por programa");
         System.out.println("8. Mostrar registro de programas académicos");
         System.out.println("9. Crear asignatura");
+        System.out.println("10. Registrar estudiante a asignatura");
+        System.out.println("11. Registrar asignatura a programa académico");
+        System.out.println("12. Mostrar estudiantes matriculados por programa con asignaturas inscritas");
         System.out.println("0. Salir");
     }
 
@@ -79,7 +94,7 @@ public class Presenter {
                 String input = scanner.nextLine().trim();           //para leer la entrada del usuario espacios en blanco adicionales y saltos de línea vacíos
                 if (!input.isEmpty()) {
                     opcion = Integer.parseInt(input);
-                    if (opcion >= 0 && opcion <= 8) {
+                    if (opcion >= 0 && opcion <= 12) {
                         break;
                     } else {
                         System.out.println("Opción no válida. Intente nuevamente.");
@@ -311,6 +326,121 @@ public class Presenter {
                 } else {
                     for (Estudiante estudiante : estudiantesMatriculados) { // Itera a través de la lista de estudiantes matriculados en el programa actual
                         System.out.println(estudiante); // Imprime la información del estudiante usando su método toString()
+                    }
+                }
+                System.out.println(); // Imprime una línea en blanco para separar la información de diferentes programas académicos
+            }
+        }
+    }
+
+    private static void createSubject(){
+        String nameSubject, idSubject, numberAssignedCredits;
+        System.out.println("=== Crear Asignatura ===");
+
+        System.out.print("Nombre de la Asignatura: ");
+        nameSubject = leerCadenaNoVacia();
+
+        System.out.print("Código de la Asignatura: ");
+        idSubject = leerCadenaNoVacia();
+
+        System.out.print("Numero de creditos de la Asignatura: ");
+        numberAssignedCredits = leerCadenaNoVacia();
+
+        asignaturas.add(new Asignatura(nameSubject, idSubject, numberAssignedCredits));
+        System.out.println("La asignatura se a registrado exitosamente.");
+    }
+
+    private static void viewSubjectRegister(){
+        int i = 0;
+        if(asignaturas.isEmpty()){
+            System.out.println("No hay asignaturas registradas.");
+        }else {
+            System.out.println("=== Asignaturas Registradas ===");
+            for(Asignatura asignatura : asignaturas){
+                System.out.println("Índice " + i + ": " + asignatura);
+                i++;
+            }
+        }
+    }
+
+    private static void registerStudentToSubject(){
+        System.out.println("=== Registrar Estudiante a Asignatura ===");
+        if (estudiantes.isEmpty()) {
+            System.out.println("No hay estudiantes registradas.");
+            return;
+        }
+
+        verEstudiantesRegistrados();
+
+        System.out.print("Ingrese el índice del estudiante que desea registrar en la asignatura: ");
+        int iStudent = leerIndiceValido(estudiantes.size());
+
+        if (asignaturas.isEmpty()) {
+            System.out.println("No hay asignaturas registradas.");
+            return;
+        }
+
+        viewSubjectRegister();
+        System.out.print("Ingrese el índice de la asignatura que desea registrar al estudiante ");
+        int iSubject = leerIndiceValido(asignaturas.size());
+
+
+        Asignatura selectSubject = asignaturas.get(iSubject);
+        selectSubject.addStudentToSubject(estudiantes.get(iStudent));
+
+        System.out.println("Estudiante registrado a " + asignaturas.get(iSubject) +" correctamente!");
+    }
+
+    private static void registerSubjectToProgram(){
+        System.out.println("=== Registrar Asignatura a programa academico ===");
+        if (asignaturas.isEmpty()) {
+            System.out.println("No hay asignaturas registradas.");
+            return;
+        }
+
+        viewSubjectRegister();
+
+        System.out.print("Ingrese el índice de la asignatura que desea registrar en el programa academico: ");
+        int iSubject = leerIndiceValido(asignaturas.size());
+
+        if (programasAcademicos.isEmpty()) {
+            System.out.println("No hay programas académicos registrados.");
+            return;
+        }
+
+        verProgramasAcademicos();
+        System.out.print("Ingrese el índice del programa académico en el que desea registrar la asignatura:  ");
+        int iProgram = leerIndiceValido(programasAcademicos.size());
+
+        ProgramaAcademico academicProgram = programasAcademicos.get(iProgram);
+        academicProgram.addSubjectToProgram(asignaturas.get(iSubject));
+
+        System.out.println("Asignatura registrada a " + programasAcademicos.get(iProgram) +" correctamente!");
+    }
+
+    private static void showAllInformationStudentsProgram(){
+        if (programasAcademicos.isEmpty()) { // Verifica si la lista de programas académicos está vacía
+            System.out.println("No hay programas académicos registrados.");
+        } else {
+            System.out.println("=== Estudiantes Matriculados por Programa Académico ===");
+            for (ProgramaAcademico programa : programasAcademicos) { // Itera a través de la lista de programas académicos usando un bucle for-each
+                System.out.println("Programa: " + programa.getNombrePrograma()); // Imprime el nombre del programa académico actual
+                List<Asignatura> asignaturaList = programa.getRegisterSubject();
+                if (asignaturaList.isEmpty()){
+                    System.out.println("No hay asignaturas registradas en este Programa Académico.");
+                }else {
+                    System.out.println("=== Estudiantes registrados por Asignatura ===");
+                    for (Asignatura asignatura : asignaturas){
+                        System.out.println("Asignatura: " + asignatura);
+                        List<Estudiante> estudiantesMatriculados = programa.getEstudiantesMatriculados(); // Obtiene la lista de estudiantes matriculados en el programa actual
+
+                        if (estudiantesMatriculados.isEmpty()) { // Verifica si la lista de estudiantes matriculados está vacía para este programa
+                            System.out.println("No hay estudiantes matriculados en este programa.");
+                        } else {
+                            for (Estudiante estudiante : estudiantesMatriculados) { // Itera a través de la lista de estudiantes matriculados en el programa actual
+                                System.out.println(estudiante); // Imprime la información del estudiante usando su método toString()
+                            }
+                        }
                     }
                 }
                 System.out.println(); // Imprime una línea en blanco para separar la información de diferentes programas académicos
